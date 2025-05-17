@@ -1,0 +1,362 @@
+USE [UniversityDB]
+GO
+/****** Object:  Table [dbo].[Users]    Script Date: 17.05.2025 12:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Users](
+	[user_id] [int] IDENTITY(1,1) NOT NULL,
+	[role_id] [int] NOT NULL,
+	[first_name] [varchar](50) NOT NULL,
+	[last_name] [varchar](50) NOT NULL,
+	[email] [varchar](100) NOT NULL,
+	[password_hash] [varchar](255) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[user_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[email] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Departments]    Script Date: 17.05.2025 12:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Departments](
+	[department_id] [int] IDENTITY(1,1) NOT NULL,
+	[department_name] [varchar](100) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[department_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[department_name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Graduates]    Script Date: 17.05.2025 12:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Graduates](
+	[graduate_id] [int] IDENTITY(1,1) NOT NULL,
+	[user_id] [int] NOT NULL,
+	[department_id] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[graduate_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[user_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  View [dbo].[View_GraduatesWithDepartments]    Script Date: 17.05.2025 12:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[View_GraduatesWithDepartments] AS
+SELECT 
+    g.graduate_id,
+    u.first_name,
+    u.last_name,
+    d.department_name
+FROM Graduates g
+JOIN Users u ON g.user_id = u.user_id
+JOIN Departments d ON g.department_id = d.department_id;
+GO
+/****** Object:  Table [dbo].[ScientificAdvisors]    Script Date: 17.05.2025 12:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ScientificAdvisors](
+	[advisor_id] [int] IDENTITY(1,1) NOT NULL,
+	[user_id] [int] NOT NULL,
+	[department_id] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[advisor_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[user_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[DiplomaWorks]    Script Date: 17.05.2025 12:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[DiplomaWorks](
+	[diploma_id] [int] IDENTITY(1,1) NOT NULL,
+	[graduate_id] [int] NOT NULL,
+	[advisor_id] [int] NOT NULL,
+	[title] [varchar](255) NOT NULL,
+	[year] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[diploma_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  View [dbo].[View_DiplomaWorksFullInfo]    Script Date: 17.05.2025 12:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[View_DiplomaWorksFullInfo] AS
+SELECT 
+    dw.diploma_id,
+    dw.title,
+    dw.year,
+    u1.first_name + ' ' + u1.last_name AS GraduateName,
+    u2.first_name + ' ' + u2.last_name AS AdvisorName
+FROM DiplomaWorks dw
+JOIN Graduates g ON dw.graduate_id = g.graduate_id
+JOIN Users u1 ON g.user_id = u1.user_id
+JOIN ScientificAdvisors sa ON dw.advisor_id = sa.advisor_id
+JOIN Users u2 ON sa.user_id = u2.user_id;
+GO
+/****** Object:  Table [dbo].[Skills]    Script Date: 17.05.2025 12:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Skills](
+	[skill_id] [int] IDENTITY(1,1) NOT NULL,
+	[skill_name] [varchar](100) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[skill_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[skill_name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[GraduateSkills]    Script Date: 17.05.2025 12:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[GraduateSkills](
+	[graduate_id] [int] NOT NULL,
+	[skill_id] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[graduate_id] ASC,
+	[skill_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  View [dbo].[View_GraduateSkills]    Script Date: 17.05.2025 12:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[View_GraduateSkills] AS
+SELECT 
+    g.graduate_id,
+    u.first_name,
+    u.last_name,
+    s.skill_name
+FROM Graduates g
+JOIN Users u ON g.user_id = u.user_id
+JOIN GraduateSkills gs ON g.graduate_id = gs.graduate_id
+JOIN Skills s ON gs.skill_id = s.skill_id;
+GO
+/****** Object:  Table [dbo].[Awards]    Script Date: 17.05.2025 12:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Awards](
+	[award_id] [int] IDENTITY(1,1) NOT NULL,
+	[graduate_id] [int] NOT NULL,
+	[award_name] [varchar](100) NOT NULL,
+	[award_year] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[award_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  View [dbo].[View_GraduateAwardCount]    Script Date: 17.05.2025 12:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[View_GraduateAwardCount] AS
+SELECT 
+    u.first_name,
+    u.last_name,
+    COUNT(a.award_id) AS AwardCount
+FROM Graduates g
+JOIN Users u ON g.user_id = u.user_id
+LEFT JOIN Awards a ON g.graduate_id = a.graduate_id
+GROUP BY u.first_name, u.last_name;
+GO
+/****** Object:  View [dbo].[View_DiplomaCountByYear]    Script Date: 17.05.2025 12:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[View_DiplomaCountByYear] AS
+SELECT 
+    year,
+    COUNT(*) AS DiplomaCount
+FROM DiplomaWorks
+GROUP BY year;
+GO
+/****** Object:  Table [dbo].[Roles]    Script Date: 17.05.2025 12:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Roles](
+	[role_id] [int] IDENTITY(1,1) NOT NULL,
+	[role_name] [varchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[role_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Awards]  WITH CHECK ADD  CONSTRAINT [FK_Awards_Graduates] FOREIGN KEY([graduate_id])
+REFERENCES [dbo].[Graduates] ([graduate_id])
+GO
+ALTER TABLE [dbo].[Awards] CHECK CONSTRAINT [FK_Awards_Graduates]
+GO
+ALTER TABLE [dbo].[DiplomaWorks]  WITH CHECK ADD  CONSTRAINT [FK_DiplomaWorks_Graduates] FOREIGN KEY([graduate_id])
+REFERENCES [dbo].[Graduates] ([graduate_id])
+GO
+ALTER TABLE [dbo].[DiplomaWorks] CHECK CONSTRAINT [FK_DiplomaWorks_Graduates]
+GO
+ALTER TABLE [dbo].[DiplomaWorks]  WITH CHECK ADD  CONSTRAINT [FK_DiplomaWorks_ScientificAdvisors] FOREIGN KEY([advisor_id])
+REFERENCES [dbo].[ScientificAdvisors] ([advisor_id])
+GO
+ALTER TABLE [dbo].[DiplomaWorks] CHECK CONSTRAINT [FK_DiplomaWorks_ScientificAdvisors]
+GO
+ALTER TABLE [dbo].[Graduates]  WITH CHECK ADD  CONSTRAINT [FK_Graduates_Departments] FOREIGN KEY([department_id])
+REFERENCES [dbo].[Departments] ([department_id])
+GO
+ALTER TABLE [dbo].[Graduates] CHECK CONSTRAINT [FK_Graduates_Departments]
+GO
+ALTER TABLE [dbo].[Graduates]  WITH CHECK ADD  CONSTRAINT [FK_Graduates_Users] FOREIGN KEY([user_id])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Graduates] CHECK CONSTRAINT [FK_Graduates_Users]
+GO
+ALTER TABLE [dbo].[GraduateSkills]  WITH CHECK ADD  CONSTRAINT [FK_GraduateSkills_Graduates] FOREIGN KEY([graduate_id])
+REFERENCES [dbo].[Graduates] ([graduate_id])
+GO
+ALTER TABLE [dbo].[GraduateSkills] CHECK CONSTRAINT [FK_GraduateSkills_Graduates]
+GO
+ALTER TABLE [dbo].[GraduateSkills]  WITH CHECK ADD  CONSTRAINT [FK_GraduateSkills_Skills] FOREIGN KEY([skill_id])
+REFERENCES [dbo].[Skills] ([skill_id])
+GO
+ALTER TABLE [dbo].[GraduateSkills] CHECK CONSTRAINT [FK_GraduateSkills_Skills]
+GO
+ALTER TABLE [dbo].[ScientificAdvisors]  WITH CHECK ADD  CONSTRAINT [FK_ScientificAdvisors_Departments] FOREIGN KEY([department_id])
+REFERENCES [dbo].[Departments] ([department_id])
+GO
+ALTER TABLE [dbo].[ScientificAdvisors] CHECK CONSTRAINT [FK_ScientificAdvisors_Departments]
+GO
+ALTER TABLE [dbo].[ScientificAdvisors]  WITH CHECK ADD  CONSTRAINT [FK_ScientificAdvisors_Users] FOREIGN KEY([user_id])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[ScientificAdvisors] CHECK CONSTRAINT [FK_ScientificAdvisors_Users]
+GO
+ALTER TABLE [dbo].[Users]  WITH CHECK ADD  CONSTRAINT [FK_Users_Roles] FOREIGN KEY([role_id])
+REFERENCES [dbo].[Roles] ([role_id])
+GO
+ALTER TABLE [dbo].[Users] CHECK CONSTRAINT [FK_Users_Roles]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_AddAward]    Script Date: 17.05.2025 12:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[sp_AddAward]
+    @GraduateId INT,
+    @AwardName VARCHAR(100),
+    @AwardYear INT
+AS
+BEGIN
+    INSERT INTO Awards (graduate_id, award_name, award_year)
+    VALUES (@GraduateId, @AwardName, @AwardYear);
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_GetDiplomaWorksByYear]    Script Date: 17.05.2025 12:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[sp_GetDiplomaWorksByYear]
+    @Year INT
+AS
+BEGIN
+    SELECT *
+    FROM DiplomaWorks
+    WHERE year = @Year;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_GetGraduatesBySkill]    Script Date: 17.05.2025 12:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[sp_GetGraduatesBySkill]
+    @SkillName VARCHAR(100)
+AS
+BEGIN
+    SELECT u.first_name, u.last_name
+    FROM Graduates g
+    JOIN Users u ON g.user_id = u.user_id
+    JOIN GraduateSkills gs ON g.graduate_id = gs.graduate_id
+    JOIN Skills s ON gs.skill_id = s.skill_id
+    WHERE s.skill_name = @SkillName;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_GetSkillsByGraduate]    Script Date: 17.05.2025 12:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[sp_GetSkillsByGraduate]
+    @GraduateId INT
+AS
+BEGIN
+    SELECT s.skill_name
+    FROM GraduateSkills gs
+    JOIN Skills s ON gs.skill_id = s.skill_id
+    WHERE gs.graduate_id = @GraduateId;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_UpdateDiplomaTitle]    Script Date: 17.05.2025 12:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[sp_UpdateDiplomaTitle]
+    @DiplomaId INT,
+    @NewTitle VARCHAR(255)
+AS
+BEGIN
+    UPDATE DiplomaWorks
+    SET title = @NewTitle
+    WHERE diploma_id = @DiplomaId;
+END;
+GO
