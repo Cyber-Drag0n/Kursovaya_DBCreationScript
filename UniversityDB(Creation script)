@@ -1,6 +1,46 @@
 USE [UniversityDB]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 17.05.2025 12:54:17 ******/
+/****** Object:  User [user_editor]    Script Date: 27.05.2025 13:34:55 ******/
+CREATE USER [user_editor] FOR LOGIN [login_editor] WITH DEFAULT_SCHEMA=[dbo]
+GO
+/****** Object:  User [user_proc]    Script Date: 27.05.2025 13:34:55 ******/
+CREATE USER [user_proc] FOR LOGIN [login_proc] WITH DEFAULT_SCHEMA=[dbo]
+GO
+/****** Object:  User [user_schema_admin]    Script Date: 27.05.2025 13:34:55 ******/
+CREATE USER [user_schema_admin] FOR LOGIN [login_schema_admin] WITH DEFAULT_SCHEMA=[dbo]
+GO
+/****** Object:  User [user_skill_award]    Script Date: 27.05.2025 13:34:55 ******/
+CREATE USER [user_skill_award] FOR LOGIN [login_skill_award] WITH DEFAULT_SCHEMA=[dbo]
+GO
+/****** Object:  User [user_viewer]    Script Date: 27.05.2025 13:34:55 ******/
+CREATE USER [user_viewer] FOR LOGIN [login_viewer] WITH DEFAULT_SCHEMA=[dbo]
+GO
+/****** Object:  DatabaseRole [db_editor]    Script Date: 27.05.2025 13:34:55 ******/
+CREATE ROLE [db_editor]
+GO
+/****** Object:  DatabaseRole [db_proc_executor]    Script Date: 27.05.2025 13:34:55 ******/
+CREATE ROLE [db_proc_executor]
+GO
+/****** Object:  DatabaseRole [db_schema_admin]    Script Date: 27.05.2025 13:34:55 ******/
+CREATE ROLE [db_schema_admin]
+GO
+/****** Object:  DatabaseRole [db_skill_award_mgr]    Script Date: 27.05.2025 13:34:55 ******/
+CREATE ROLE [db_skill_award_mgr]
+GO
+/****** Object:  DatabaseRole [db_viewer]    Script Date: 27.05.2025 13:34:55 ******/
+CREATE ROLE [db_viewer]
+GO
+ALTER ROLE [db_editor] ADD MEMBER [user_editor]
+GO
+ALTER ROLE [db_proc_executor] ADD MEMBER [user_proc]
+GO
+ALTER ROLE [db_schema_admin] ADD MEMBER [user_schema_admin]
+GO
+ALTER ROLE [db_skill_award_mgr] ADD MEMBER [user_skill_award]
+GO
+ALTER ROLE [db_viewer] ADD MEMBER [user_viewer]
+GO
+/****** Object:  Table [dbo].[Users]    Script Date: 27.05.2025 13:34:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -22,7 +62,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Departments]    Script Date: 17.05.2025 12:54:17 ******/
+/****** Object:  Table [dbo].[Departments]    Script Date: 27.05.2025 13:34:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -40,7 +80,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Graduates]    Script Date: 17.05.2025 12:54:17 ******/
+/****** Object:  Table [dbo].[Graduates]    Script Date: 27.05.2025 13:34:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -59,7 +99,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[View_GraduatesWithDepartments]    Script Date: 17.05.2025 12:54:17 ******/
+/****** Object:  View [dbo].[View_GraduatesWithDepartments]    Script Date: 27.05.2025 13:34:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -74,7 +114,7 @@ FROM Graduates g
 JOIN Users u ON g.user_id = u.user_id
 JOIN Departments d ON g.department_id = d.department_id;
 GO
-/****** Object:  Table [dbo].[ScientificAdvisors]    Script Date: 17.05.2025 12:54:17 ******/
+/****** Object:  Table [dbo].[ScientificAdvisors]    Script Date: 27.05.2025 13:34:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -93,7 +133,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[DiplomaWorks]    Script Date: 17.05.2025 12:54:17 ******/
+/****** Object:  Table [dbo].[DiplomaWorks]    Script Date: 27.05.2025 13:34:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -110,7 +150,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[View_DiplomaWorksFullInfo]    Script Date: 17.05.2025 12:54:17 ******/
+/****** Object:  View [dbo].[View_DiplomaWorksFullInfo]    Script Date: 27.05.2025 13:34:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -128,7 +168,7 @@ JOIN Users u1 ON g.user_id = u1.user_id
 JOIN ScientificAdvisors sa ON dw.advisor_id = sa.advisor_id
 JOIN Users u2 ON sa.user_id = u2.user_id;
 GO
-/****** Object:  Table [dbo].[Skills]    Script Date: 17.05.2025 12:54:17 ******/
+/****** Object:  Table [dbo].[Skills]    Script Date: 27.05.2025 13:34:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -146,7 +186,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[GraduateSkills]    Script Date: 17.05.2025 12:54:17 ******/
+/****** Object:  Table [dbo].[GraduateSkills]    Script Date: 27.05.2025 13:34:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -161,7 +201,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[View_GraduateSkills]    Script Date: 17.05.2025 12:54:17 ******/
+/****** Object:  View [dbo].[View_GraduateSkills]    Script Date: 27.05.2025 13:34:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -177,7 +217,7 @@ JOIN Users u ON g.user_id = u.user_id
 JOIN GraduateSkills gs ON g.graduate_id = gs.graduate_id
 JOIN Skills s ON gs.skill_id = s.skill_id;
 GO
-/****** Object:  Table [dbo].[Awards]    Script Date: 17.05.2025 12:54:17 ******/
+/****** Object:  Table [dbo].[Awards]    Script Date: 27.05.2025 13:34:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -193,7 +233,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[View_GraduateAwardCount]    Script Date: 17.05.2025 12:54:17 ******/
+/****** Object:  View [dbo].[View_GraduateAwardCount]    Script Date: 27.05.2025 13:34:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -208,7 +248,7 @@ JOIN Users u ON g.user_id = u.user_id
 LEFT JOIN Awards a ON g.graduate_id = a.graduate_id
 GROUP BY u.first_name, u.last_name;
 GO
-/****** Object:  View [dbo].[View_DiplomaCountByYear]    Script Date: 17.05.2025 12:54:17 ******/
+/****** Object:  View [dbo].[View_DiplomaCountByYear]    Script Date: 27.05.2025 13:34:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -220,7 +260,7 @@ SELECT
 FROM DiplomaWorks
 GROUP BY year;
 GO
-/****** Object:  Table [dbo].[Roles]    Script Date: 17.05.2025 12:54:17 ******/
+/****** Object:  Table [dbo].[Roles]    Script Date: 27.05.2025 13:34:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -284,7 +324,7 @@ REFERENCES [dbo].[Roles] ([role_id])
 GO
 ALTER TABLE [dbo].[Users] CHECK CONSTRAINT [FK_Users_Roles]
 GO
-/****** Object:  StoredProcedure [dbo].[sp_AddAward]    Script Date: 17.05.2025 12:54:17 ******/
+/****** Object:  StoredProcedure [dbo].[sp_AddAward]    Script Date: 27.05.2025 13:34:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -299,7 +339,7 @@ BEGIN
     VALUES (@GraduateId, @AwardName, @AwardYear);
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[sp_GetDiplomaWorksByYear]    Script Date: 17.05.2025 12:54:17 ******/
+/****** Object:  StoredProcedure [dbo].[sp_GetDiplomaWorksByYear]    Script Date: 27.05.2025 13:34:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -313,7 +353,7 @@ BEGIN
     WHERE year = @Year;
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[sp_GetGraduatesBySkill]    Script Date: 17.05.2025 12:54:17 ******/
+/****** Object:  StoredProcedure [dbo].[sp_GetGraduatesBySkill]    Script Date: 27.05.2025 13:34:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -330,7 +370,7 @@ BEGIN
     WHERE s.skill_name = @SkillName;
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[sp_GetSkillsByGraduate]    Script Date: 17.05.2025 12:54:17 ******/
+/****** Object:  StoredProcedure [dbo].[sp_GetSkillsByGraduate]    Script Date: 27.05.2025 13:34:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -345,7 +385,7 @@ BEGIN
     WHERE gs.graduate_id = @GraduateId;
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[sp_UpdateDiplomaTitle]    Script Date: 17.05.2025 12:54:17 ******/
+/****** Object:  StoredProcedure [dbo].[sp_UpdateDiplomaTitle]    Script Date: 27.05.2025 13:34:56 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
